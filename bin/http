@@ -23,4 +23,4 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $cli = new \Akamai\Open\EdgeGrid\Cli();
-$cli->run();
+$cli->run($_SERVER['argv']);

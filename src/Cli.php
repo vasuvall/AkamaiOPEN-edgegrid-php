@@ -23,23 +23,34 @@ namespace Akamai\Open\EdgeGrid;
 class Cli
 {
     /**
-     * @var CLImate
+     * @var \League\CLImate\CLImate
      */
     protected $climate;
 
-    public function __construct()
+    /**
+     * @var ClientFactory
+     */
+    private $factory;
+
+    public function __construct(ClientFactory $factory = null)
     {
+        $this->factory = $factory;
+        if ($factory === null) {
+            $this->factory = new ClientFactory([static::class, 'factory']);
+        }
+
         $this->climate = new \League\CLImate\CLImate();
         $this->climate->description("Akamai {OPEN} Edgegrid Auth for PHP Client");
     }
 
-    public function run()
+    public function run($args)
     {
-        $this->parseArguments();
-        $this->executeCommand();
+        if ($this->parseArguments($args)) {
+            $this->executeCommand($args);
+        }
     }
 
-    protected function parseArguments()
+    protected function parseArguments($inputArgs)
     {
         $args = [
             'help' => [
@@ -50,7 +61,6 @@ class Cli
             ],
             'auth-type' => [
                 'longPrefix' => 'auth-type',
-                'prefix' => 'a',
                 'description' => "{basic, digest, edgegrid}"
             ],
             'auth' => [
@@ -62,12 +72,18 @@ class Cli
 
         $this->climate->arguments->add($args);
 
-        if ($_SERVER['argc'] == 1) {
-            $this->help();
+        if (sizeof($inputArgs) == 1) {
+            $this->help($inputArgs);
+            return false;
+        }
+
+        if ($this->climate->arguments->get('help')) {
+            $this->help($inputArgs);
+            return false;
         }
 
         try {
-            $this->climate->arguments->parse($_SERVER['argv']);
+            $this->climate->arguments->parse($inputArgs);
 
             $padding = sizeof($args);
             foreach ($this->climate->arguments->toArray() as $arg) {
@@ -75,14 +91,16 @@ class Cli
                     $padding -= 1;
                 }
             }
-            $argSize = sizeof($_SERVER['argv']) - $padding - 1;
+            $argSize = sizeof($inputArgs) - $padding - 1;
             for ($i = 0; $i < $argSize; $i++) {
                 $args['arg-' . $i] = [];
             }
             $this->climate->arguments->add($args);
-            $this->climate->arguments->parse($_SERVER['argv']);
+            $this->climate->arguments->parse($inputArgs);
         } catch (\Exception $e) {
         }
+
+        return true;
     }
 
     protected function executeCommand()
@@ -94,10 +112,6 @@ class Cli
             'PUT',
             'DELETE'
         ];
-
-        if ($this->climate->arguments->get('help')) {
-            $this->help();
-        }
 
         \Akamai\Open\EdgeGrid\Client::setDebug(true);
         \Akamai\Open\EdgeGrid\Client::setVerbose(true);
@@ -119,12 +133,13 @@ class Cli
                 if ($this->climate->arguments->defined('auth')) {
                     $section = (substr($auth, -1) == ':') ? substr($auth, 0, -1) : $auth;
                 }
-                $client = Client::createFromEdgeRcFile($section);
+                $client = $this->factory($section);
             }
 
             if (in_array($this->climate->arguments->get('auth-type'), ['basic', 'digest'])) {
                 if (!$this->climate->arguments->defined('auth') || $this->climate->arguments->get('auth') === null) {
-                    $this->help();
+                    $this->help($this->climate->arguments->all());
+                    return false;
                 }
 
                 $auth = [
@@ -187,9 +202,13 @@ class Cli
         $client->request($method, $url, $options);
     }
 
-    public function help()
+    public function help($inputArgs)
     {
-        $this->climate->usage($_SERVER['argv']);
-        exit;
+        $this->climate->usage($inputArgs);
+    }
+
+    public static function factory($section)
+    {
+        return Client::createFromEdgeRcFile($section);
     }
 }

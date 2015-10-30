@@ -31,7 +31,7 @@ if (class_exists('Phar')) {
 Phar::interceptFileFuncs();
 require_once 'phar://' .__FILE__. '/vendor/autoload.php';
 if (PHP_SAPI == 'cli') {
-    (new \\Akamai\\Open\\EdgeGrid\\Cli())->run();
+    (new \\Akamai\\Open\\EdgeGrid\\Cli())->run($_SERER['argv']);
     exit;
 }
 __HALT_COMPILER(); ?>
