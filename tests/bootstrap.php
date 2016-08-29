@@ -19,4 +19,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-require_once __DIR__ . '/../vendor/autoload.php';
+if (\version_compare(PHP_VERSION, '5.5.0', '>=')) {
+    passthru("travis_retry composer install --no-interaction --prefer-source");
+    require_once __DIR__ . '/../vendor/autoload.php';
+}

@@ -28,30 +28,22 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response;
 
 /**
- * Test for Akamai\Open\EdgeGrid\Client
- *
- * @author Davey Shafik <dshafik@akamai.com>
- * @since PHP 5.6
- * @version 1.0
+ * @requires PHP 5.5
  */
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp()
+    protected function setUp()
     {
         Client::setVerbose(false);
         Client::setDebug(false);
     }
 
     /**
-     * @param $name
-     * @param $options
-     * @param $request
-     * @param $result
      * @dataProvider makeAuthHeaderProvider
      */
     public function testMakeAuthHeader($name, $options, $request, $result)
     {
-        //$this->setName($name);
+        $this->setName($name);
 
         // Mock the response, we don't care about it
         $container = [];

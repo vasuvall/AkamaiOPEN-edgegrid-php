@@ -19,9 +19,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Akamai\Open\EdgeGrid\Tests\Client;
+namespace Akamai\Open\EdgeGrid\Tests;
 
-class AuthenticationTest extends \PHPUnit_Framework_TestCase
+class AuthenticationTest extends ClientTest
 {
     /**
      * @dataProvider createAuthHeaderDataProvider
@@ -77,7 +77,7 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
         $authentication->createAuthHeader();
 
         $this->assertInstanceOf(
-            \Akamai\Open\EdgeGrid\Authentication\Timestamp::CLASS,
+            '\Akamai\Open\EdgeGrid\Authentication\Timestamp',
             \PHPUnit_Framework_Assert::readAttribute($authentication, 'timestamp')
         );
     }
@@ -93,7 +93,7 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
         $authentication->setNonce();
 
         $this->assertInstanceOf(
-            \Akamai\Open\EdgeGrid\Authentication\Nonce::CLASS,
+            '\Akamai\Open\EdgeGrid\Authentication\Nonce',
             \PHPUnit_Framework_Assert::readAttribute($authentication, 'nonce')
         );
     }
@@ -418,12 +418,6 @@ class AuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $config['query'] = 'query=string';
         $this->assertEquals($config, \PHPUnit_Framework_Assert::readAttribute($authentication, 'config'));
-    }
-
-    public function createFromEdgeRcProvider()
-    {
-        $clientTest = new \Akamai\Open\EdgeGrid\Tests\ClientTest();
-        return $clientTest->createFromEdgeRcProvider();
     }
 
     public function createAuthHeaderDataProvider()
