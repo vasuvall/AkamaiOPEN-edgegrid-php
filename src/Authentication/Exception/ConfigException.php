@@ -2,10 +2,6 @@
 /**
  * Akamai {OPEN} EdgeGrid Auth for PHP
  *
- * Provides Request Signing as per
- * {@see https://developer.akamai.com/introduction/Client_Auth.html}
- * as GuzzleHttp a Middleware Handlers
- *
  * @author Davey Shafik <dshafik@akamai.com>
  * @copyright Copyright 2016 Akamai Technologies, Inc. All rights reserved.
  * @license Apache 2.0
