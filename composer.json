@@ -14,12 +14,6 @@
     "require": {
         "php": ">=5.3"
     },
-    "require-dev": {
-        "phpunit/phpunit": "~4.7",
-        "squizlabs/php_codesniffer": "^2.3",
-        "friendsofphp/php-cs-fixer": "^1.9",
-        "kherge/box": "^2.5"
-    },
     "suggest": {
         "akamai-open/edgegrid-client": "Provide a fully featured HTTP client & CLI pre-configured with EdgeGrid authentication. (PHP 5.5+)"
     },
